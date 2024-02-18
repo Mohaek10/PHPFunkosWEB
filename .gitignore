@@ -1,0 +1,8 @@
+/vendor/
+/dist/
+.idea/
+*.iml
+*.log
+*.log.*
+*.log-*
+
