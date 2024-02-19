@@ -44,7 +44,7 @@ class Categoria
         return $this;
     }
 
-    public function generateUUID()
+    public function generateUUID(): string
     {
         return Uuid::uuid4()->toString();
 

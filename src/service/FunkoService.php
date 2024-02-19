@@ -19,9 +19,7 @@ class FunkoService
 
     public function findAllWithCategoryName($searchTerm = null)
     {
-        $sql = "SELECT f.*, c.nombre as categoria_nombre
-        FROM funko f
-        left join categorias c on f.categoria_id = c.id";
+        $sql = "SELECT f.*, c.nombre as categoria_nombre FROM funko f left join categorias c on f.categoria_id = c.id";
 
         if ($searchTerm) {
             $searchTerm = '%' . strtolower($searchTerm) . '%';

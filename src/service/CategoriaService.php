@@ -1,6 +1,8 @@
 <?php
 namespace service;
+use Error;
 use models\Categoria;
+use models\Funkos;
 use PDO;
 
 require_once __DIR__ . '/../models/Categoria.php';
@@ -69,10 +71,19 @@ class CategoriaService
 
     public function create(Categoria $categoria)
     {
-        $categoria->id = Categoria::generateUUID();
+        $categoria->id = (new \models\Categoria)->generateUUID();
+        //comporbar que el nombre no exista
+        $stmt = $this->pdo->prepare("SELECT * FROM categorias WHERE nombre = :nombre");
+        $stmt->execute(['nombre' => $categoria->nombre]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return new Error('Ya existe una categoría con ese nombre');
+        }
+
+
         $stmt = $this->pdo->prepare("INSERT INTO categorias (id, nombre) VALUES (:id, :nombre)");
         $stmt->execute(['id' => $categoria->id, 'nombre' => $categoria->nombre]);
-        return $this->findById($this->pdo->lastInsertId());
+        return $this->findById($categoria->id);
     }
 
 
@@ -92,8 +103,32 @@ class CategoriaService
     //Borrado lógico
     public function deleteLogical($id)
     {
-        $stmt = $this->pdo->prepare("UPDATE categorias SET is_deleted = 1 WHERE id = :id");
+        $stmt = $this->pdo->prepare("UPDATE categorias SET is_deleted = TRUE WHERE id = :id");
         $stmt->execute(['id' => $id]);
+
+    }
+
+    public function findFunkosByCategoria($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM funko WHERE categoria_id = :id");
+        $stmt->execute(['id' => $id]);
+
+        $funkos = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $funko = new Funkos(
+                $row['id'],
+                $row['nombre'],
+                $row['precio'],
+                $row['cantidad'],
+                $row['imagen'],
+                $row['createdat'],
+                $row['updatedat'],
+                $row['categoria_id'],
+                $row['is_deleted']
+            );
+            $funkos[] = $funko;
+        }
+        return $funkos;
     }
 
 

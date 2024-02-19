@@ -5,30 +5,26 @@ $session = SessionService::getInstance();
 $username = $session->isLoggedIn() ? $session->getUsername() : 'Sin sesión';
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark gradient-custom">
-    <!-- Container wrapper -->
     <div class="container-fluid">
-        <!-- Navbar brand -->
         <a class="navbar-brand" href="index.php">FunkoLandia</a>
 
-        <!-- Toggle button -->
         <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
                 data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
             <i class="fas fa-bars text-light"></i>
         </button>
 
-        <!-- Collapsible wrapper -->
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- Left links -->
             <ul class="navbar-nav me-auto d-flex flex-row mt-3 mt-lg-0">
                 <li class="nav-item text-center mx-2 mx-lg-1">
-                    <a class="nav-link active" aria-current="page" href="#!">
+                    <a class="nav-link active" aria-current="page" href="index.php">
 
                         Inicio
                     </a>
                 </li>
                 <li class="nav-item text-center mx-2 mx-lg-1">
-                    <a class="nav-link" href="#!">
+                    <a class="nav-link" href="Categorias.php">
                         Categorias
                     </a>
                 </li>

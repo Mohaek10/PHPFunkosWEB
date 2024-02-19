@@ -43,8 +43,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($precio)) {
         $errores['precio'] = 'El precio no puede estar vacio';
     }
+    if ($precio <= 0) {
+        $errores['precio'] = 'El precio no puede ser menor o igual a 0';
+    }
     if (empty($cantidad)) {
         $errores['cantidad'] = 'La cantidad no puede estar vacia';
+    }
+    if ($cantidad <= 0) {
+        $errores['cantidad'] = 'La cantidad no puede ser menor o igual a 0';
     }
     if (empty($categoria)) {
         $errores['categoria'] = 'La categoria no puede estar vacia';
@@ -98,12 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="mb-3">
                         <label for="precio" class="form-label">Precio</label>
-                        <input type="text" class="form-control" id="precio" name="precio" value="<?php echo $_POST['precio'] ?? '' ?>">
+                        <input type="number" class="form-control" min="0" id="precio" name="precio" value="<?php echo $_POST['precio'] ?? '' ?>">
                         <div id="emailHelp" class="form-text text-danger"><?php echo $errores['precio'] ?? '' ?></div>
                     </div>
                     <div class="mb-3">
                         <label for="cantidad" class="form-label">Cantidad</label>
-                        <input type="text" class="form-control" id="cantidad" name="cantidad" value="<?php echo $_POST['cantidad'] ?? '' ?>">
+                        <input type="number" min="0" class="form-control" id="cantidad" name="cantidad" value="<?php echo $_POST['cantidad'] ?? '' ?>">
                         <div id="emailHelp" class="form-text text-danger"><?php echo $errores['cantidad'] ?? '' ?></div>
                     </div>
                     <div class="mb-3">

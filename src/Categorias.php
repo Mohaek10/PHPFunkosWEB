@@ -12,8 +12,8 @@ require_once __DIR__ . '/models/Funkos.php';
 require_once __DIR__ . '/service/SessionService.php';
 
 $session = $sessionService = \service\SessionService::getInstance();
-?>
 
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,56 +27,42 @@ $session = $sessionService = \service\SessionService::getInstance();
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet"/>
-    <title>Funkos</title>
+    <title>Categorias</title>
 </head>
 <body>
 <?php require_once 'header.php'?>
 <?php
 $config = Config::getInstance();
 ?>
-
 <main class="main flow">
     <div class="container mt-3">
-
         <div class="row">
             <?php
-            $search= $_GET['search'] ?? null;
-            $funkoService = new FunkoService($config->db);
-            $funkos = $funkoService->findAllWithCategoryName($search);
+            $categoriaService = new CategoriaService($config->db);
+            $categorias = $categoriaService->findAll();
             ?>
-            <?php foreach ($funkos as $funko): ?>
+            <?php foreach ($categorias as $categoria): ?>
                 <div class="col-md-4 mb-3">
-                    <div class="card cards__card">
-                        <img src="<?php echo htmlspecialchars($funko->imagen); ?>" class="card-img-top" alt="imagen">
+                    <div class="card cards card">
                         <div class="card-body">
-                            <h5 class="card-title "><?php echo htmlspecialchars($funko->nombre); ?></h5>
-                            <span class="badge bg-primary">ID: <?php echo htmlspecialchars($funko->id); ?></span>
-                            <p class="card-text">Categoria: <?php echo htmlspecialchars($funko->categoriaNombre); ?></p>
-                            <p class="card-text">Precio: <?php echo htmlspecialchars($funko->precio); ?></p>
-                            <p class="card-text">Cantidad: <?php echo htmlspecialchars($funko->cantidad); ?></p>
-                            <a href="details.php?id=<?php echo $funko->id; ?>" class="card__cta cta">Detalles</a>
+                            <h5 class="card-title "><?php echo htmlspecialchars($categoria->nombre); ?></h5>
+                            <span class="badge bg-primary">ID: <?php echo htmlspecialchars($categoria->id); ?></span>
+                            <a href="CategoriaFunko.php?id=<?php echo $categoria->id; ?>" class="card__cta cta">Ver Funkos</a>
                             <?php if($_SESSION['isAdmin']): ?>
-                                <a href="edit.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Editar</a>
-                                <a href="update-image.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Cambiar Imagen</a>
-                                <a href="delete.php?id=<?php echo $funko->id; ?>" class="card__ctaB ctaB">Eliminar</a>
+                                <a href="delete-categoria.php?id=<?php echo $categoria->id; ?>" class="btn btn-danger">Eliminar</a>
                             <?php endif; ?>
                         </div>
                     </div>
+
                 </div>
             <?php endforeach; ?>
-            <?php if($_SESSION['isAdmin']): ?>
-                <div class="col-md-12 mb-4 text-center">
-                    <a href="Create.php" class="btn btn-success">Añadir nuevo Funko</a>
-                </div>
-            <?php endif; ?>
         </div>
+        <?php if($_SESSION['isAdmin']): ?>
+            <a href="create-categoria.php" class="btn btn-primary">Crear Categoria</a>
+
+        <?php endif; ?>
     </div>
 </main>
-
-
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
         crossorigin="anonymous"></script>

@@ -1,4 +1,5 @@
 <?php
+
 use config\Config;
 use service\FunkoService;
 use service\CategoriaService;
@@ -12,6 +13,7 @@ require_once __DIR__ . '/models/Funkos.php';
 require_once __DIR__ . '/service/SessionService.php';
 
 $session = $sessionService = \service\SessionService::getInstance();
+
 ?>
 
 
@@ -27,56 +29,30 @@ $session = $sessionService = \service\SessionService::getInstance();
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet"/>
-    <title>Funkos</title>
+    <title>Categoria-Funkos</title>
 </head>
 <body>
 <?php require_once 'header.php'?>
 <?php
 $config = Config::getInstance();
 ?>
+<?php
+require_once 'service/CategoriaService.php';
+$categoriaService = new CategoriaService($config->db);
+$id = $_GET['id'];
+$funkos = $categoriaService->findFunkosByCategoria($id);
+?>
 
-<main class="main flow">
-    <div class="container mt-3">
-
-        <div class="row">
-            <?php
-            $search= $_GET['search'] ?? null;
-            $funkoService = new FunkoService($config->db);
-            $funkos = $funkoService->findAllWithCategoryName($search);
-            ?>
-            <?php foreach ($funkos as $funko): ?>
-                <div class="col-md-4 mb-3">
-                    <div class="card cards__card">
-                        <img src="<?php echo htmlspecialchars($funko->imagen); ?>" class="card-img-top" alt="imagen">
-                        <div class="card-body">
-                            <h5 class="card-title "><?php echo htmlspecialchars($funko->nombre); ?></h5>
-                            <span class="badge bg-primary">ID: <?php echo htmlspecialchars($funko->id); ?></span>
-                            <p class="card-text">Categoria: <?php echo htmlspecialchars($funko->categoriaNombre); ?></p>
-                            <p class="card-text">Precio: <?php echo htmlspecialchars($funko->precio); ?></p>
-                            <p class="card-text">Cantidad: <?php echo htmlspecialchars($funko->cantidad); ?></p>
-                            <a href="details.php?id=<?php echo $funko->id; ?>" class="card__cta cta">Detalles</a>
-                            <?php if($_SESSION['isAdmin']): ?>
-                                <a href="edit.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Editar</a>
-                                <a href="update-image.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Cambiar Imagen</a>
-                                <a href="delete.php?id=<?php echo $funko->id; ?>" class="card__ctaB ctaB">Eliminar</a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-            <?php if($_SESSION['isAdmin']): ?>
-                <div class="col-md-12 mb-4 text-center">
-                    <a href="Create.php" class="btn btn-success">Añadir nuevo Funko</a>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
-</main>
-
-
-
-
-
+<div class="container mt-5">
+    <h1 class="mb-4">Funkos de la categoría</h1>
+    <ul class="list-group">
+        <?php foreach ($funkos as $funko): ?>
+            <li class="list-group-item text-white">
+                <?php echo $funko->nombre; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
         crossorigin="anonymous"></script>
@@ -109,41 +85,8 @@ $config = Config::getInstance();
         background-color: #212121;
         color: #ddd;
     }
-
-
-
-
-    .card {
-        --flow-space: 0.5em;
-        --hsl: var(--hue), var(--saturation), var(--lightness);
-        flex: 1 1 14rem;
-        padding: 1.5em 2em;
-        display: grid;
-        grid-template-rows: auto auto auto 1fr;
-        align-items: start;
-        gap: 1.25em;
-        color: #eceff1;
-        background-color: #2b2b2b;
-        border: 1px solid #eceff133;
-        border-radius: 15px;
-    }
-
-    .card:nth-child(1) {
-        --hue: 165;
-        --saturation: 82.26%;
-        --lightness: 51.37%;
-    }
-
-    .card:nth-child(2) {
-        --hue: 291.34;
-        --saturation: 95.9%;
-        --lightness: 61.76%;
-    }
-
-    .card:nth-child(3) {
-        --hue: 338.69;
-        --saturation: 100%;
-        --lightness: 48.04%;
+    li{
+        color: #dddddd;
     }
 
 
@@ -157,60 +100,7 @@ $config = Config::getInstance();
 
 
 
-    .flow > * + * {
-        margin-top: var(--flow-space, 1.25em);
-    }
 
-    .cta {
-        display: block;
-        align-self: end;
-        margin: 1em 0 0.5em 0;
-        text-align: center;
-        text-decoration: none;
-        color: #fff;
-        background-color: rgba(19, 128, 0, 0.85);
-        padding: 0.7em;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
-    }
-    .ctaB {
-        display: block;
-        align-self: end;
-        margin: 1em 0 0.5em 0;
-        text-align: center;
-        text-decoration: none;
-        color: #fff;
-        background-color: rgb(122, 22, 22);
-        padding: 0.7em;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
-    }
-
-    .overlay .card {
-        background-color: hsla(var(--hsl), 0.15);
-        border-color: hsla(var(--hsl), 1);
-        box-shadow: 0 0 0 1px inset hsl(var(--hsl));
-    }
-
-    .overlay .cta {
-        display: block;
-        grid-row: -1;
-        width: 100%;
-        background-color: hsl(var(--hsl));
-        box-shadow: 0 0 0 1px hsl(var(--hsl));
-    }
-
-    :not(.overlay) > .card {
-        transition: 400ms background ease;
-        will-change: background;
-    }
-
-    :not(.overlay) > .card:hover {
-        --lightness: 95%;
-        background: hsla(var(--hsl), 0.1);
-    }
 
 </style>
 
@@ -265,3 +155,5 @@ $config = Config::getInstance();
 </script>
 </body>
 </html>
+
+
