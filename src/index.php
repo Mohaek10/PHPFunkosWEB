@@ -1,3 +1,20 @@
+<?php
+use config\Config;
+use service\FunkoService;
+use services\CategoriaService;
+
+require_once 'vendor/autoload.php';
+
+require_once __DIR__ . '/service/FunkoService.php';
+require_once __DIR__ . '/service/CategoriaService.php';
+require_once __DIR__ . '/config/Config.php';
+require_once __DIR__ . '/models/Funkos.php';
+require_once __DIR__ . '/service/SessionService.php';
+
+$session = $sessionService = \service\SessionService::getInstance();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,9 +30,48 @@
     <title>Funkos</title>
 </head>
 <body>
-<?php require_once 'header.php'
+<?php require_once 'header.php'?>
+<?php
+$config = Config::getInstance();
 ?>
 
+<main>
+    <div class="container mt-3">
+
+        <div class="row">
+            <?php
+            $search= $_GET['search'] ?? null;
+            $funkoService = new FunkoService($config->db);
+            $funkos = $funkoService->findAllWithCategoryName($search);
+            ?>
+            <?php foreach ($funkos as $funko): ?>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="<?php echo htmlspecialchars($funko->imagen); ?>" class="card-img-top" alt="imagen">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo htmlspecialchars($funko->nombre); ?></h5>
+                            <span class="badge bg-primary">ID: <?php echo htmlspecialchars($funko->id); ?></span>
+                            <p class="card-text">Categoria: <?php echo htmlspecialchars($funko->categoriaNombre); ?></p>
+                            <p class="card-text">Precio: <?php echo htmlspecialchars($funko->precio); ?></p>
+                            <p class="card-text">Cantidad: <?php echo htmlspecialchars($funko->cantidad); ?></p>
+                            <a href="details.php?id=<?php echo $funko->id; ?>" class="btn btn-primary">Detalles</a>
+                            <?php if($_SESSION['isAdmin']): ?>
+                                <a href="edit.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Editar</a>
+                                <a href="cambiar-imagen.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Cambiar Imagen</a>
+                                <a href="delete.php?id=<?php echo $funko->id; ?>" class="btn btn-danger">Eliminar</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+            <?php if($_SESSION['isAdmin']): ?>
+                <div class="col-md-12 mb-4 text-center">
+                    <a href="add.php" class="btn btn-success">Añadir nuevo Funko</a>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</main>
 
 
 

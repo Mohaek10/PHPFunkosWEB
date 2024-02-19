@@ -1,12 +1,14 @@
-<header>
-    <h1>Funkos</h1>
-</header>
-<!-- Navbar -->
+<?php
+use service\SessionService;
+require_once 'service/SessionService.php';
+$session = SessionService::getInstance();
+$username = $session->isLoggedIn() ? $session->getUsername() : 'Sin sesión';
+?>
 <nav class="navbar navbar-expand-lg navbar-dark gradient-custom">
     <!-- Container wrapper -->
     <div class="container-fluid">
         <!-- Navbar brand -->
-        <a class="navbar-brand" href="#">FunkoLandia</a>
+        <a class="navbar-brand" href="index.php">FunkoLandia</a>
 
         <!-- Toggle button -->
         <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
@@ -30,42 +32,47 @@
                         Categorias
                     </a>
                 </li>
-                <li class="nav-item text-center mx-2 mx-lg-1">
-                    <a class="nav-link disabled" aria-disabled="true" href="#!">
-                        Admin
-                    </a>
-                </li>
             </ul>
+            <nav class="navbar navbar-expand-lg navbar-dark ">
+                <div class="container-fluid d-flex justify-content-center align-items-center">
+                    <a class="navbar-brand" href="index.php">FunkoLandia</a>
+                </div>
+            </nav>
             <ul class="navbar-nav ms-auto d-flex flex-row mt-3 mt-lg-0">
-                <li class="nav-item text-center mx-2 mx-lg-1">
-                    <a class="nav-link" href="#!">
-                        <div>
-                            <i class="fas fa-bell fa-lg mb-1"></i>
-                            <span class="badge rounded-pill badge-notification bg-dark">11</span>
-                        </div>
-                        Messages
-                    </a>
-                </li>
-                <li class="nav-item text-center mx-2 mx-lg-1">
-                    <a class="nav-link" href="#!">
-                        <div>
-                            <i class="fas fa-globe-americas fa-lg mb-1"></i>
-                            <span class="badge rounded-pill badge-notification bg-dark">11</span>
-                        </div>
-                        News
-                    </a>
-                </li>
+                <?php if ($session->isLoggedIn()): ?>
+                    <li class="nav-item text-center mx-2 mx-lg-1">
+                        <a class="nav-link" href="logout.php">
+                            Logout
+                        </a>
+                    </li>
+                    <li class="nav-item text-center mx-2 mx-lg-1">
+                        <a class="nav-link " href="perfil.php">
+                            <?php echo $session->getUsername(); ?>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="nav-item text-center mx-2 mx-lg-1">
+                        <a class="nav-link" href="SignUp.php">
+                            Registrarse
+                        </a>
+                    </li>
+                    <li class="nav-item text-center mx-2 mx-lg-1">
+                        <a class="nav-link" href="login.php">
+                            Iniciar Sesión
+                        </a>
+                    </li>
+                <?php endif; ?>
             </ul>
-
-            <form class="d-flex input-group w-auto ms-lg-3 my-3 my-lg-0">
-                <input type="search" class="form-control" placeholder="Search" aria-label="Search" />
-                <button class="btn btn-outline-primary" type="button" data-mdb-ripple-color="dark">
+            <form class="d-flex input-group w-auto ms-lg-3 my-3 my-lg-0" action="index.php" method="get">
+                <input id="search" name="search" type="text" class="form-control" placeholder="Buscar" aria-label="Search" />
+                <button class="btn btn-outline-primary" type="submit" >
                     Search
                 </button>
             </form>
         </div>
     </div>
 </nav>
+
 <style>
     .btn {
         padding: .45rem 1.5rem .35rem;

@@ -1,4 +1,4 @@
-SELECT 'CREATE DATABASE nombre_de_la_base_de_datos'
+SELECT 'CREATE DATABASE funkos'
     WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'funkos');
 
 
@@ -29,14 +29,14 @@ CREATE TABLE "public"."funko" (
     "precio" character varying(255) NOT NULL,
     "cantidad" integer DEFAULT '0' NOT NULL,
     "imagen" character varying DEFAULT 'https://via.placeholder.com/150' NOT NULL,
-    "fecha_creacion" timestamp DEFAULT now() NOT NULL,
-    "fecha_actualizacion" timestamp DEFAULT now() NOT NULL,
+    "createdat" timestamp DEFAULT now() NOT NULL,
+    "updatedat" timestamp DEFAULT now() NOT NULL,
     "is_deleted" boolean DEFAULT false NOT NULL,
     "categoria_id" uuid,
     CONSTRAINT "PK_2159f453346bb15653b8825f3ec" PRIMARY KEY ("id")
 ) WITH (oids = false);
 
-INSERT INTO "funko" ("id", "nombre", "precio", "cantidad", "imagen", "fecha_creacion", "fecha_actualizacion", "is_deleted", "categoria_id") VALUES
+INSERT INTO "funko" ("id", "nombre", "precio", "cantidad", "imagen", "createdat", "updatedat", "is_deleted", "categoria_id") VALUES
 (1,	'Spiderman',	'500000',	20,	'https://via.placeholder.com/150',	'2024-01-08 15:01:41.953773',	'2024-01-08 15:01:41.953773',	'f',	'939cf843-5ecd-477c-a68a-0207122a4a88'),
 (2,	'IronMan',	'300000',	20,	'https://via.placeholder.com/150',	'2024-01-08 19:32:40.05201',	'2024-01-08 19:32:40.05201',	'f',	'939cf843-5ecd-477c-a68a-0207122a4a88'),
 (3,	'Batman',	'9090099',	20,	'https://via.placeholder.com/150',	'2024-01-09 19:32:40.05201',	'2024-01-09 19:32:40.05201',	'f',	'939cf843-5ecd-477c-a68a-0207122a4a88');

@@ -29,14 +29,23 @@ class Funkos
         $this->isDeleted = $isDeleted;
     }
 
-    public function __get($nombre)
+    public function __get($property)
     {
-        return $this->nombre;
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
     }
 
-    public function __set($nombre, $valor)
+    public function __set($property, $value)
     {
-        $this->nombre = $valor;
+        if (property_exists($this, $property)) {
+            $this->$property = $value;
+        }
+
+        return $this;
     }
+
+
+
 
 }

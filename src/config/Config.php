@@ -27,11 +27,10 @@ class Config
         $dotenv = Dotenv::createImmutable($this->rootPath);
         $dotenv->load();
 
-        // Cargar las variables de entorno y almacenarlas en las propiedades.
-        $this->postgresDb = getenv('POSTGRES_DB') ?? 'default_db';
-        $this->postgresUser = getenv('POSTGRES_USER') ?? 'default_user';
-        $this->postgresPassword = getenv('POSTGRES_PASSWORD') ?? 'default_password';
-        $this->postgresHost = getenv('POSTGRES_HOST') ?? 'localhost';
+        $this->postgresDb = getenv('POSTGRES_DB') ?? 'funkos';
+        $this->postgresUser = getenv('POSTGRES_USER') ?? 'moha';
+        $this->postgresPassword = getenv('POSTGRES_PASSWORD') ?? '12345';
+        $this->postgresHost = getenv('POSTGRES_HOST') ?? 'postgres-db';
         $this->postgresPort = getenv('POSTGRES_PORT') ?? '5432';
         $this->db = new PDO("pgsql:host={$this->postgresHost};port={$this->postgresPort};dbname={$this->postgresDb}", $this->postgresUser, $this->postgresPassword);
     }
