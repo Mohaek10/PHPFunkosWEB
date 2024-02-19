@@ -19,11 +19,11 @@ class FunkoService
 
     public function findAllWithCategoryName($searchTerm = null)
     {
-        $sql = "SELECT f.*, c.nombre as categoria_nombre FROM funko f left join categorias c on f.categoria_id = c.id";
+        $sql = "SELECT f.*, c.nombre as categoria_nombre FROM funko f LEFT JOIN categorias c ON f.categoria_id = c.id";
 
         if ($searchTerm) {
             $searchTerm = '%' . strtolower($searchTerm) . '%';
-            $sql .= " WHERE lower(f.nombre) like :searchTerm";
+            $sql .= " WHERE LOWER(f.nombre) LIKE :searchTerm";
         }
         $sql .= " ORDER BY f.id ASC";
         $stmt = $this->pdo->prepare($sql);
