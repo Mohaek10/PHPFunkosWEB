@@ -56,10 +56,15 @@ class FunkoService
 
     public function findById($id)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM funko WHERE id = :id");
+        $stmt = $this->pdo->prepare("
+        SELECT f.*, c.nombre as categoria_nombre 
+        FROM funko f 
+        left join categorias c on f.categoria_id = c.id 
+        WHERE f.id = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
         if (!$row) {
             return null;
         }
@@ -72,7 +77,7 @@ class FunkoService
             $row['createdat'],
             $row['updatedat'],
             $row['categoria_id'],
-            $row['categoriaNombre'],
+            $row['categoria_nombre'],
             $row['is_deleted']
         );
     }
