@@ -1,7 +1,9 @@
 <?php
 use config\Config;
 use service\FunkoService;
-use services\CategoriaService;
+use service\CategoriaService;
+use models\Funkos;
+use service\SessionService;
 
 require_once 'vendor/autoload.php';
 
@@ -12,8 +14,60 @@ require_once __DIR__ . '/models/Funkos.php';
 require_once __DIR__ . '/service/SessionService.php';
 
 $session = $sessionService = \service\SessionService::getInstance();
-?>
+if (!$session->isAdmin()) {
+    echo "<script>alert('No tienes permisos para acceder a esta página');window.location.href='index.php';</script>";
+    exit;
+}
 
+$config = Config::getInstance();
+$funkoService = new FunkoService($config->db);
+$categoriaService = new CategoriaService($config->db);
+
+$categorias = $categoriaService->findAll();
+
+$errores = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nombre = filter_input(INPUT_POST, 'nombre', FILTER_SANITIZE_STRING);
+    $precio = filter_input(INPUT_POST, 'precio', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    $cantidad = filter_input(INPUT_POST, 'cantidad', FILTER_VALIDATE_INT);
+    $categoria = filter_input(INPUT_POST, 'categoria', FILTER_SANITIZE_STRING);
+
+    $categoria = $categoriaService->findByName($categoria);
+    if (!$categoria) {
+        $errores['categoria'] = 'La categoria no existe';
+    }
+    if (empty($nombre)) {
+        $errores['nombre'] = 'El nombre no puede estar vacio';
+    }
+    if (empty($precio)) {
+        $errores['precio'] = 'El precio no puede estar vacio';
+    }
+    if (empty($cantidad)) {
+        $errores['cantidad'] = 'La cantidad no puede estar vacia';
+    }
+    if (empty($categoria)) {
+        $errores['categoria'] = 'La categoria no puede estar vacia';
+    }
+
+    if (empty($errores)) {
+        $funko = new Funkos();
+        $funko->nombre = $nombre;
+        $funko->precio = $precio;
+        $funko->cantidad = $cantidad;
+        $funko->categoriaId = $categoria->id;
+        $funko->imagen = 'https://via.placeholder.com/150';
+
+        try {
+            $funkoService->create($funko);
+            echo "<script>alert('Funko creado correctamente');window.location.href='index.php';</script>";
+            exit;
+        } catch (Exception $e) {
+            $errores['db'] = 'Ha habido un error en la base de datos';
+        }
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,56 +81,47 @@ $session = $sessionService = \service\SessionService::getInstance();
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.min.css" rel="stylesheet"/>
-    <title>Funkos</title>
+    <title>Crear Funko</title>
 </head>
 <body>
 <?php require_once 'header.php'?>
-<?php
-$config = Config::getInstance();
-?>
-
 <main class="main flow">
     <div class="container mt-3">
-
         <div class="row">
-            <?php
-            $search= $_GET['search'] ?? null;
-            $funkoService = new FunkoService($config->db);
-            $funkos = $funkoService->findAllWithCategoryName($search);
-            ?>
-            <?php foreach ($funkos as $funko): ?>
-                <div class="col-md-4 mb-3">
-                    <div class="card cards__card">
-                        <img src="<?php echo htmlspecialchars($funko->imagen); ?>" class="card-img-top" alt="imagen">
-                        <div class="card-body">
-                            <h5 class="card-title "><?php echo htmlspecialchars($funko->nombre); ?></h5>
-                            <span class="badge bg-primary">ID: <?php echo htmlspecialchars($funko->id); ?></span>
-                            <p class="card-text">Categoria: <?php echo htmlspecialchars($funko->categoriaNombre); ?></p>
-                            <p class="card-text">Precio: <?php echo htmlspecialchars($funko->precio); ?></p>
-                            <p class="card-text">Cantidad: <?php echo htmlspecialchars($funko->cantidad); ?></p>
-                            <a href="details.php?id=<?php echo $funko->id; ?>" class="card__cta cta">Detalles</a>
-                            <?php if($_SESSION['isAdmin']): ?>
-                                <a href="edit.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Editar</a>
-                                <a href="update-image.php?id=<?php echo $funko->id; ?>" class="btn btn-warning">Cambiar Imagen</a>
-                                <a href="delete.php?id=<?php echo $funko->id; ?>" class="card__ctaB ctaB">Eliminar</a>
-                            <?php endif; ?>
-                        </div>
+            <div class="col-md-12">
+                <h1 class="text-center">Crear Funko</h1>
+                <form action="Create.php" method="post">
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo $_POST['nombre'] ?? '' ?>">
+                        <div id="emailHelp" class="form-text text-danger"><?php echo $errores['nombre'] ?? '' ?></div>
                     </div>
-                </div>
-            <?php endforeach; ?>
-            <?php if($_SESSION['isAdmin']): ?>
-                <div class="col-md-12 mb-4 text-center">
-                    <a href="Create.php" class="btn btn-success">Añadir nuevo Funko</a>
-                </div>
-            <?php endif; ?>
+                    <div class="mb-3">
+                        <label for="precio" class="form-label">Precio</label>
+                        <input type="text" class="form-control" id="precio" name="precio" value="<?php echo $_POST['precio'] ?? '' ?>">
+                        <div id="emailHelp" class="form-text text-danger"><?php echo $errores['precio'] ?? '' ?></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidad" class="form-label">Cantidad</label>
+                        <input type="text" class="form-control" id="cantidad" name="cantidad" value="<?php echo $_POST['cantidad'] ?? '' ?>">
+                        <div id="emailHelp" class="form-text text-danger"><?php echo $errores['cantidad'] ?? '' ?></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoria</label>
+                        <select class="form-select" id="categoria" name="categoria">
+                            <option value="">Selecciona una categoria</option>
+                            <?php foreach ($categorias as $categoria): ?>
+                                <option value="<?php echo $categoria->nombre ?>"><?php echo $categoria->nombre ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div id="emailHelp" class="form-text text-danger"><?php echo $errores['categoria'] ?? '' ?></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </form>
+            </div>
         </div>
     </div>
 </main>
-
-
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
         crossorigin="anonymous"></script>
@@ -112,7 +157,10 @@ $config = Config::getInstance();
 
 
 
-
+    .main {
+        max-width: 75rem;
+        padding: 3em 1.5em;
+    }
     .card {
         --flow-space: 0.5em;
         --hsl: var(--hue), var(--saturation), var(--lightness);
@@ -168,20 +216,7 @@ $config = Config::getInstance();
         text-align: center;
         text-decoration: none;
         color: #fff;
-        background-color: rgba(19, 128, 0, 0.85);
-        padding: 0.7em;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
-    }
-    .ctaB {
-        display: block;
-        align-self: end;
-        margin: 1em 0 0.5em 0;
-        text-align: center;
-        text-decoration: none;
-        color: #fff;
-        background-color: rgb(122, 22, 22);
+        background-color: #0d0d0d;
         padding: 0.7em;
         border-radius: 10px;
         font-size: 1rem;

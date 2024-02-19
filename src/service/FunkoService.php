@@ -95,7 +95,39 @@ class FunkoService
         $stmt->bindValue(':createdat', $funko->createdat, PDO::PARAM_STR);
         $stmt->bindValue(':updatedat', $funko->updatedat, PDO::PARAM_STR);
         $stmt->bindValue(':categoria_id', $funko->categoriaId, PDO::PARAM_INT);
-        $stmt->execute();
+       return $stmt->execute();
+    }
+
+    public function update(Funkos $funko)
+    {
+        $sql = "UPDATE funko SET 
+                 nombre = :nombre, 
+                 precio = :precio, 
+                 cantidad = :cantidad, 
+                 imagen = :imagen, 
+                 updatedat = :updatedat, 
+                 categoria_id = :categoria_id 
+             WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':nombre', $funko->nombre, PDO::PARAM_STR);
+        $stmt->bindValue(':precio', $funko->precio, PDO::PARAM_STR);
+        $stmt->bindValue(':cantidad', $funko->cantidad, PDO::PARAM_INT);
+        $stmt->bindValue(':imagen', $funko->imagen, PDO::PARAM_STR);
+        $funko->updatedat = date('Y-m-d H:i:s');
+        $stmt->bindValue(':updatedat', $funko->updatedat, PDO::PARAM_STR);
+        $stmt->bindValue(':categoria_id', $funko->categoriaId, PDO::PARAM_INT);
+        $stmt->bindValue(':id', $funko->id, PDO::PARAM_INT);
+        return $stmt->execute();
+
+    }
+
+    public function delete($id)
+    {
+        $sql="DELETE FROM funko WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        return $stmt->execute();
+
     }
 
 

@@ -28,16 +28,23 @@ class Categoria
     }
 
 
-    public function getNombre()
+    public function __get($property)
     {
-        return $this->nombre;
+        if (property_exists($this, $property)) {
+            return $this->$property;
+        }
     }
 
-    public function setNombre($nombre)
+    public function __set($property, $value)
     {
-        $this->nombre = $nombre;
+        if (property_exists($this, $property)) {
+            $this->$property = $value;
+        }
+
+        return $this;
     }
-    private function generateUUID()
+
+    public function generateUUID()
     {
         return Uuid::uuid4()->toString();
 

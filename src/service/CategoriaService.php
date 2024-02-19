@@ -1,5 +1,5 @@
 <?php
-namespace services;
+namespace service;
 use models\Categoria;
 use PDO;
 
@@ -67,12 +67,14 @@ class CategoriaService
         return $categoria;
     }
 
-    public function create($nombre)
+    public function create(Categoria $categoria)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO categorias (nombre) VALUES (:nombre)");
-        $stmt->execute(['nombre' => $nombre]);
+        $categoria->id = Categoria::generateUUID();
+        $stmt = $this->pdo->prepare("INSERT INTO categorias (id, nombre) VALUES (:id, :nombre)");
+        $stmt->execute(['id' => $categoria->id, 'nombre' => $categoria->nombre]);
         return $this->findById($this->pdo->lastInsertId());
     }
+
 
     public function update($id, $nombre)
     {
