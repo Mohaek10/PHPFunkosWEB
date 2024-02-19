@@ -46,7 +46,8 @@ if ($session->isLoggedIn()) {
 
             try {
                 $usersService->registrarse($usuarioNuevo);
-                echo '<div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-labelledby="loginSuccessModalLabel" aria-hidden="true">
+                echo '
+<div class="modal fade" id="loginSuccessModal" tabindex="-1" aria-labelledby="loginSuccessModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -62,7 +63,8 @@ if ($session->isLoggedIn()) {
     </div>
   </div>
 </div>';
-                unset($_SESSION['loggedIn']);
+                $isAdmin = in_array('ADMIN', $usuarioNuevo->roles);
+                $session->login($usuarioNuevo->username, $isAdmin);
             } catch (Exception $e) {
                 $error = $e->getMessage();
                 $errorMessage['error'] = $error;
