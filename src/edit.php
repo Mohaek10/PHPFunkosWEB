@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <!--Imagen -->
                     <div class="mb-3">
                         <label for="imagen" class="form-label">Imagen</label>
-                        <input type="text" readonly required class="form-control" id="imagen" name="imagen"
+                        <input type="text" disabled readonly required class="form-control" id="imagen" name="imagen"
                                value="<?php echo htmlspecialchars($funko->imagen); ?>">
                         <?php if (isset($errores['imagen'])): ?>
                             <small class="text-danger"><?php echo $errores['imagen']; ?></small>
