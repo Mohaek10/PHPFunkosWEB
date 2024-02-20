@@ -54,11 +54,7 @@ class FunkoService
 
     public function findById($id)
     {
-        $stmt = $this->pdo->prepare("
-        SELECT f.*, c.nombre as categoria_nombre 
-        FROM funko f 
-        left join categorias c on f.categoria_id = c.id 
-        WHERE f.id = :id");
+        $stmt = $this->pdo->prepare("SELECT f.*, c.nombre as categoria_nombre FROM funko f LEFT JOIN categorias c ON f.categoria_id = c.id WHERE f.id = :id");
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -125,7 +121,6 @@ class FunkoService
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
-
     }
 
 
